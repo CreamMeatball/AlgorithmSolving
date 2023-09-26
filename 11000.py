@@ -1,4 +1,5 @@
 import sys
+import heapq
 
 input = sys.stdin.readline
 
@@ -11,14 +12,16 @@ classroom = 1
 
 startEnd.sort()
 
-endTime = [-1]
+endTime = []
 
-for i in range(N):
-    minimum = min(endTime)
-    if minimum <= startEnd[i][0]:
-        endTime[endTime.index(minimum)] = startEnd[i][1]
-    else:
+heapq.heappush(endTime, startEnd[0][1])
+
+for i in range(1, N):
+    if startEnd[i][0] < endTime[0]:
+        heapq.heappush(endTime, startEnd[i][1])
         classroom += 1
-        endTime.append(startEnd[i][1])
+    else:
+        heapq.heappop(endTime)
+        heapq.heappush(endTime, startEnd[i][1])
         
 print(classroom)
