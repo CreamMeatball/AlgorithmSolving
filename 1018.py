@@ -1,7 +1,10 @@
-M, N = map(int, input().split())
+N, M = map(int, input().split())
+# 행, 열 순서.
+# 행, 열 헷갈리게 않게 조심.
 
 # [[-1]*M]*N 으로 쓰게 되면 shallow copy가 돼서, 한 값을 바꾸면 다른 모든 값이 바뀜
 board = [[-1 for _ in range(M)] for _ in range(N)]
+# [[0 for _ in range(j)] for _ in range(i)] 형식으로 쓸 때, j가 열, i가 행이 됨(변수를 거꾸로 - 열, 행 순서로 써야함)
 
 # for i in range(N):
 #     board_input = str(input())
@@ -16,7 +19,8 @@ for i in range(N):
 
 def splitBoard(i, j):
     # i, j 는 시작점.
-    split_board = [[-1 for _ in range(8)] for _ in range(8)]
+    # i : 행, j : 열. list[i][j] 면 i가 행, j가 열.
+    split_board = [[-1 for l in range(8)] for k in range(8)]
     for k in range(8):
         for l in range(8):
             split_board[k][l] = board[i+k][j+l]
