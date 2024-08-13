@@ -6,5 +6,4 @@ for _ in range(N):
     
 sorted_numbers = sorted(numbers)
 
-for i in range(len(sorted_numbers)):
-    print(sorted_numbers[i])
+print('\n'.join(str(n) for n in sorted_numbers))
