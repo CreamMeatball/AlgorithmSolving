@@ -3,8 +3,8 @@ point = []
 for i in range(N):
     point.append(list(input().split()))
     
-row_max, row_min = 0, 1000001
-col_max, col_min = 0, 1000001
+row_max, row_min = -1000001, 1000001
+col_max, col_min = -1000001, 1000001
 
 for i in range(N):
     row_max = max(row_max, int(point[i][0]))
