@@ -18,14 +18,18 @@ N = int(input())
 
 for i in range(N):
     start_number = int(input())
-    # 4*10^10 까지 확인
-    for j in range(start_number, 4*10**10+1):
-        if isPrime(j):
-            print(j)
-            break
-    # j = start_number
-    # while True:
+    # # 4*10^9 까지 확인
+    # for j in range(start_number, 4*10**9+1):
     #     if isPrime(j):
     #         print(j)
     #         break
-    #     j += 1
+    
+    # 4*10^9 까지만 범위를 잡아서 for문 돌릴 경우에, 4*10^9 이 입력으로 들어왔을 때 그 위에 어떠한 소수가 존재할 것이니 그걸 출력해야함에도,
+    # 루프 자체를 4*10^9 까지만 도니까 4*10^9 을 초과하는 소수는 출력이 안 됨.
+    # 그렇기 때문에 아래 코드로 수정.
+    j = start_number
+    while True:
+        if isPrime(j):
+            print(j)
+            break
+        j += 1
