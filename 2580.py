@@ -24,16 +24,6 @@ def sudoku(depth, board, rows, cols, boxes):
     else:
         sudoku(depth + 1, board, rows, cols, boxes)
 
-def check(y, x, num, board):
-    for i in range(9):
-        if board[y][i] == num or board[i][x] == num:
-            return False
-    for i in range(3):
-        for j in range(3):
-            if board[(y // 3) * 3 + i][(x // 3) * 3 + j] == num:
-                return False
-    return True
-
 # 9x9 보드를 입력받습니다.
 board = [list(map(int, input().split())) for _ in range(9)]
 
