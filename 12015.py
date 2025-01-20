@@ -57,7 +57,7 @@ for case in cases:
 print(f"final lis : {lis}") if test_print else None
 print(len(lis)-1)
 
-# 예제 이해
+# 예제 이해 
 # 수열 A = {10, 20, 10, 30, 20, 50}을 예로 들어 설명해보겠습니다.
 
 # 초기 lis = [0]
