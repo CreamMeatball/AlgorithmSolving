@@ -1,3 +1,5 @@
+# PyPy3 로 내야 시간 초과 안 남.
+
 import sys
 
 input = sys.stdin.readline
