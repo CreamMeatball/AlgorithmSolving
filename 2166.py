@@ -61,7 +61,8 @@ origin = (0, 0)
 for i in range(N):
     p1 = coord[i]
     p2 = coord[(i + 1) % N]
-    partial_area = abs(CCW(origin, p1, p2)) / 2
+    partial_area = CCW(origin, p1, p2)
     area += partial_area
 
+area = abs(area) / 2
 print(f"{area:.1f}")
