@@ -2,6 +2,7 @@ import sys
 from collections import deque
 
 input_ = sys.stdin.readline
+testPrint = False
 N, M = map(int, input_().split())
 
 # bfs + kruskal
@@ -13,11 +14,14 @@ for _ in range(N):
 map_.append([-1] * (M + 2))
 
 # 섬 번호 기록용
-island_map = [[0] * (M + 2) for _ in range(N + 2)]
+island_map = [[-1] * (M + 2)]
+for _ in range(N):
+    island_map.append([-1] + [0] * (M) + [-1])
+island_map.append([-1] * (M + 2))
 visited    = [[False] * (M + 2) for _ in range(N + 2)]
 direction  = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
-island_index = 0
+island_index = 1
 
 def bfs(init_x, init_y, idx):
     queue = deque([(init_x, init_y)])
@@ -26,22 +30,28 @@ def bfs(init_x, init_y, idx):
     while queue:
         x, y = queue.popleft()
         for dx, dy in direction:
-            nx, ny = x+dx, y+dy
+            nx, ny = x + dx, y + dy
             if not visited[nx][ny] and map_[nx][ny] == 1:
-                visited[nx][ny]    = True
+                visited[nx][ny] = True
                 island_map[nx][ny] = idx
                 queue.append((nx, ny))
 
 # 1) 섬 번호 매기기 (bfs)
-for i in range(1, N+1):
-    for j in range(1, M+1):
-        if map_[i][j]==1 and not visited[i][j]:
+for i in range(1, N + 1):
+    for j in range(1, M + 1):
+        if map_[i][j] == 1 and not visited[i][j]:
             bfs(i, j, island_index)
             island_index += 1
 
-# 2) 가능한 다리 모두 찾기
+if testPrint:
+    print("island_map: ")
+    for row in island_map:
+        print(row)
+
+# 2) a땅 <-> b땅 가는 최소의 다리 길이 찾기
 INF = 10**9
 edges = {}   # key=(a,b), value=최소 길이
+island_valid = [False] * (island_index) # island_index가 이미 +1 된 상태
 for i in range(1, N + 1):
     for j in range(1, M + 1):
         a = island_map[i][j]
@@ -57,36 +67,53 @@ for i in range(1, N + 1):
                     if island_map[x][y] == 0:
                         length += 1
                         continue
-                    b = island_map[x][y]
+                    b = island_map[x][y] # 다른 땅에 다다랐을 때
                     if b != a and length >= 2:
                         key = (a, b) if a < b else (b, a)
-                        edges[key] = min(edges.get(key, INF), length)
+                        island_valid[a] = True; island_valid[b] = True
+                        edges[key] = min(edges.get(key, INF), length) # key값 (a, b)의 값(a<->b)을 최소값으로 설정
                     break
 
-# 3) Kruskal을 위한 간선 리스트 생성 및 정렬
-edge_list = sorted((L, a, b) for (a,b), L in edges.items())
+if testPrint:
+    print("edges: ")
+    print(edges)
+    
+if testPrint:
+    print("island_valid: ")
+    print(island_valid)
+    
+for v in island_valid[1:]:
+    if not v:
+        print(-1)
+        sys.exit()
 
-parent = list(range(island_index))
+# 3) Kruskal을 위한 간선 리스트 생성 및 정렬
+edge_list = sorted((length, a, b) for (a,b), length in edges.items())
+
+if testPrint:
+    print("edges_list: ")
+    print(edge_list)
+
+parent = list(range(island_index)) # island_index가 이미 +1 된 상태
 def find(x):
     if parent[x] != x:
         parent[x] = find(parent[x])
     return parent[x]
 def union(a, b):
-    ra, rb = find(a), find(b)
-    if ra != rb:
-        parent[rb] = ra
+    root_a, root_b = find(a), find(b)
+    if root_a != root_b:
+        parent[root_b] = root_a
 
 # 4) MST 구하기
-res = 0
-cnt = 0
-for L, a, b in edge_list:
-    if find(a) != find(b):
-        union(a,b)
-        res += L
-        cnt += 1
-        if cnt == island_index-1:
-            break
-
-# 5) 모든 섬이 연결됐는지 확인
-roots = set(find(i) for i in range(island_index))
-print(res if len(roots) == 1 else -1)
+def kruskal(edge_list):
+    total_min_length = 0
+    for e in edge_list:
+        length, a, b = e
+        print(f"(a, b): {a, b}, length: {length}") if testPrint else None
+        if find(a) != find(b):
+            union(a, b)
+            total_min_length += length
+    return total_min_length
+            
+total_min_length = kruskal(edge_list)
+print(total_min_length)
