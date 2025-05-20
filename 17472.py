@@ -106,14 +106,18 @@ def union(a, b):
 
 # 4) MST 구하기
 def kruskal(edge_list):
-    total_min_length = 0
+    total_min_length, edge_count = 0, 0
     for e in edge_list:
         length, a, b = e
         print(f"(a, b): {a, b}, length: {length}") if testPrint else None
         if find(a) != find(b):
             union(a, b)
             total_min_length += length
-    return total_min_length
+            edge_count += 1
+    return total_min_length, edge_count
             
-total_min_length = kruskal(edge_list)
+total_min_length, edge_count = kruskal(edge_list)
+if edge_count != island_index - 2: # 예를 들어, 네 섬 중 두 섬끼리만 연결돼있고 전체 연결은 되어있지 않은 경우
+    print(-1)
+    sys.exit()
 print(total_min_length)
