@@ -7,11 +7,11 @@ for i, num in enumerate(numbers):
         max_num = num
     player_scores[num] = 0
     
-numbers.sort()
+# numbers.sort()
 
 for num in numbers:
     for multiplied_num in range(num * 2, max_num + 1, num):
-        if player_scores[multiplied_num]:
+        if multiplied_num in player_scores:
             player_scores[multiplied_num] -= 1
             player_scores[num] += 1
             
