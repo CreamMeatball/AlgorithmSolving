@@ -16,7 +16,7 @@ for c in range(3): # 첫번째 집이 c번째 색을 고른 세계관
     for i in range(3):
         if c == i:
             dp[0][i] = costs[i]
-        else:
+        else: 
             dp[0][i] = costs[i]
     for i in range(1, N - 1):
         dp[i][0] = costs[i][0] + min(dp[i - 1][1], dp[i - 1][2])
