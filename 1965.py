@@ -7,7 +7,7 @@ boxes = list(map(int, input().split()))
 dp = [1] * (n)
 
 for i in range(n):
-    for j in range(i): # i에서의 dp값을 최대값으로 만들어줌
+    for j in range(i): # i에서의 dp값을 최대값으로 만들어줌. i번째 상자를 포함시킬 때 가능한 최대값
         if boxes[j] < boxes[i]:
             dp[i] = max(dp[i], dp[j] + 1)
             
