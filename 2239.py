@@ -1,42 +1,45 @@
 import sys
-
+sys.setrecursionlimit(10**7)
 input_ = sys.stdin.readline
 
-# sudokuMap = [list(map(int, list(str(input_().rstrip())))) for _ in range(9)]
-sudokuMap = [list(int(n) for n in str(input_().rstrip())) for _ in range(9)]
+board = [list(map(int, input_().rstrip())) for _ in range(9)]
 
-def checkNumbersConflict(numbers: list):
-    # check conflict
-    checklist = set()
-    for n in numbers:
-        if (n != 0) and (n not in checklist):
-            checklist.add(n)
-        else:
-            return False
-    return True
-
+empties = [] # 빈 칸 좌표
+# 행/열/3x3 에서 어떤 숫자가 이미 사용되었는지 기록용.
+row_used   = [[False]*10 for _ in range(9)]
+col_used   = [[False]*10 for _ in range(9)]
+block_used = [[False]*10 for _ in range(9)]
 
 for i in range(9):
     for j in range(9):
-        if sudokuMap[i][j] == 0:
-            for k in range(1, 10): # k: 넣을 숫자
-                updatedRow = sudokuMap[i][:j] + [k] + sudokuMap[i][j + 1:]
-                updatedCol = []
-                for l in range(9):
-                    if l == i:
-                        updatedCol.append(k)
-                    else:
-                        updatedCol.append(sudokuMap[l][j])
-                updatedBox = []
-                pointX = (i // 3) * 3
-                pointY = (j // 3) * 3
-                for l in range(3):
-                    for m in range(3):
-                        updatedBox.append(sudokuMap[pointX + l][pointY + m])
-                updatedBox[pointX + i % 3][pointY + j % 3] = k
-                
-                if checkNumbersConflict(updatedRow) and checkNumbersConflict(updatedCol) and checkNumbersConflict(updatedBox):
-                    # 현재 위치(i, j)의 sudoku 빈 칸에 값 k를 넣는다.
-                    
-                # ...
-                # 만약 이후에 안 될 경우 Backtracking
+        v = board[i][j]
+        if v == 0:
+            empties.append((i,j))
+        else:
+            row_used[i][v] = True
+            col_used[j][v] = True
+            b = (i // 3) * 3 + (j // 3)
+            block_used[b][v] = True
+
+def dfs(idx):
+    if idx == len(empties):
+        for row in board:
+            print(''.join(map(str, row)))
+        sys.exit(0)
+
+    i, j = empties[idx]
+    b = (i // 3) * 3 + (j // 3) # 넣어볼 숫자
+    for k in range(1, 10):
+        if (not row_used[i][k] # 넣어볼 숫자(b)가 행에서 아직 사용 안했을 경우
+            and not col_used[j][k] # 넣어볼 숫자(b)가 열에서 아직 사용 안했을 경우
+            and not block_used[b][k]): # 넣어볼 숫자(b)가 3x3에서 아직 사용 안했을 경우
+            board[i][j] = k
+            row_used[i][k] = col_used[j][k] = block_used[b][k] = True
+
+            dfs(idx + 1)
+
+            # 백트래킹 복귀
+            board[i][j] = 0
+            row_used[i][k] = col_used[j][k] = block_used[b][k] = False
+
+dfs(0)
