@@ -1,29 +1,28 @@
 import sys
 
-sys.setrecursionlimit(10**6)
+sys.setrecursionlimit(10 ** 6)
 input = sys.stdin.readline
 
-M, N = map(int, input().rstrip().split())
-board = []
-for _ in range(M):
-    board.append(list(input().rstrip().split()))
-    
+M, N = map(int, input().split())
+board = [list(map(int, input().split())) for _ in range(M)]
+
 directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-count = 0
-start = (0, 0)
+dp = [[-1] * N for _ in range(M)] # 메모이제이션
 
-def dfs(current):
-    global count
-    r, c = current
+def dfs(r, c):
     if r == M - 1 and c == N - 1:
-        count += 1
-    current_h = board[r][c]
-    for d in directions:
-        nr = r + d[0]
-        nc = c + d[1]
-        if (0 <= nr < M and 0 <= nc < N) and board[nr][nc] < current_h:
-            dfs((nr, nc))
-    return
+        return 1
+    
+    if dp[r][c] != -1:
+        return dp[r][c]
+    
+    ways = 0
+    for dr, dc in directions:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < M and 0 <= nc < N and board[nr][nc] < board[r][c]:
+            ways += dfs(nr, nc)
+    
+    dp[r][c] = ways
+    return ways
 
-dfs(start)
-print(count)
+print(dfs(0, 0))
