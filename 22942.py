@@ -1,45 +1,44 @@
 import sys
-
 input = sys.stdin.readline
 
 N = int(input().rstrip())
-
 circles = []
-for _ in range(N):
-    circles.append(tuple(map(int, input().rstrip().split())))
-    
-circles.sort(key=lambda x: x[0])
-# combinations 써서 모든 경우 쌍 다 해보면 시간 초과 남.
-# x 위치 기준으로 정렬한 뒤에 인접한 것끼리만 비교.
 
-def isInner(circle1, circle2):
-    x1, r1 = circle1
-    x2, r2 = circle2
-    
-    if abs(x1 - x2) < max(r1, r2):
-        return True
-    return False
+# 원 두 개 골라서 내접 외접 판단하는 원론적 방식으로 그냥 푸니까 시간 초과 남
 
-for i in range(N - 1):
-    
-    circle1, circle2 = circles[i], circles[i + 1]
-    
-    if isInner(circle1, circle2): # 원이 내부에 들어있을 때
-        if abs(circle1[1] - circle2[1]) > abs(circle1[0] - circle2[0]):
-            # 안 겹침
+# stack의 관점으로 접근하여 풀이하기
+# (참고: https://velog.io/@leetaekyu2077/Python-%EB%B0%B1%EC%A4%80-22942%EB%B2%88-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%B2%B4%EC%BB%A4 )
+# 원의 왼쪽 x절편: ( 또는 [
+# 원의 오른쪽 x절편: ) 또는 ]
+# 이라고 할 때
+
+# 접하지 않는 경우
+# ( [ ] )  # 원의 내부에서 접하지 않음
+# ( ) [ ]  # 원의 외부에서 접하지 않음
+
+# 접하는 경우
+# ( [ ) ]
+
+# stack 관점으로 보아서, 괄호가 순서에 맞게 열리고 닫히면 접하지 않음, 그렇지 않으면 접함(교점 생김)
+
+for i in range(N):
+    x, r = map(int, input().rstrip().split())
+    circles.append((x-r, i)) # 원의 왼쪽 x절편
+    circles.append((x+r, i)) # 원의 오른쪽 x절편
+circles.sort()
+
+stack = []
+for c in circles:
+    if stack:
+        if stack[-1][1] == c[1]:
+            stack.pop() # 열리고 닫힘
             continue
-        else:
-            # 겹침
-            break
-    else: # 원이 외부에 있을 때
-        if circle1[1] + circle2[1] < abs(circle1[0] - circle2[0]):
-            # 안 겹침
-            continue
-        else:
-            # 겹침
-            break
-else:
+    stack.append(c) # 새로 열림
+    
+# 다 진행나고 나서, 스택 내부에 값이 존재하지 않으면
+# 정상적으로 다 열리고 닫혔단 뜻이므로, 모든 원이 서로 접하지 않음
+
+if not stack:
     print("YES")
-    sys.exit()
-
-print("NO")
+else:
+    print("NO")
